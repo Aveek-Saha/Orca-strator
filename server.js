@@ -7,5 +7,5 @@ app.get('/', function (req, res) {
     res.render('index.html');
 });
 
-app.listen(8000);
+app.listen(3000);
 console.log("Server started");
