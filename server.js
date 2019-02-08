@@ -14,7 +14,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
 
 var Act = mongoose.model('Act',{
-    _id: Number,
     actId: Number,
     username: String,
     timestamp: String,
@@ -25,7 +24,6 @@ var Act = mongoose.model('Act',{
 });
 
 var Category = mongoose.model('Category', {
-    _id: String,
     count: Number,
     name: String,
     acts: []
@@ -40,6 +38,8 @@ app.get('/', function (req, res) {
 app.post('/api/v1/users', function (req, res) {
     // Add User
     // Error codes: 201- created, 400- bad request, 405- method not allowed
+
+
 });
 
 app.delete('/api/v1/users/:username', function (req, res) {
@@ -71,17 +71,21 @@ app.post('/api/v1/categories', function (req, res) {
     // Error codes: 201- created, 400- bad request, 405- method not allowed
 
     req.body.forEach(cat => {
-        Category.create({
-            _id: cat,
-            count: 0,
-            name: cat,
-            acts: []
-        }, (err, c) => {
-            if (err) 
-                res.status(400);
-            else
-                res.status(200);
+        Category.find({ name: cat}, (err, cats) => {
+            if(cats.length == 0){
+                Category.create({
+                    count: 0,
+                    name: cat,
+                    acts: []
+                }, (err, c) => {
+                    if (err)
+                        res.status(400);
+                    else
+                        res.status(201);
+                });
+            }
         });
+        
     });
     res.send({})
 });
@@ -90,7 +94,7 @@ app.delete('/api/v1/categories/:categoryName', function (req, res) {
     // Remove a category
     // Error codes: 200- ok, 400- bad request, 405- method not allowed
 
-    Category.deleteOne({ _id: req.params.categoryName }, function (err) {
+    Category.deleteOne({ name: req.params.categoryName }, function (err) {
         if (err)
             res.status(400);
         else
@@ -134,7 +138,6 @@ app.post('/api/v1/acts', function (req, res) {
     // Error codes: 201- created, 400- bad request, 405- method not allowed
 
     var act = new Act ({
-        _id: req.body.actId,
         username: req.body.username,
         actId: req.body.actId,
         timestamp: req.body.timestamp,
@@ -144,7 +147,7 @@ app.post('/api/v1/acts', function (req, res) {
         upvotes: 0
     });
     
-    Category.findOneAndUpdate({ _id: req.body.category }, { $push: { acts: act } }, (err, doc) => {
+    Category.findOneAndUpdate({ name: req.body.category }, { $push: { acts: act } }, (err, doc) => {
         if (err)
             res.status(400);
         else
