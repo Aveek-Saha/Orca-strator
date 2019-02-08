@@ -39,16 +39,19 @@ app.get('/', function (req, res) {
 
 app.post('/api/v1/users', function (req, res) {
     // Add User
+    // Error codes: 201- created, 400- bad request, 405- method not allowed
 });
 
 app.delete('/api/v1/users/:username', function (req, res) {
     // Remove user
+    // Error codes: 200- ok, 400- bad request, 405- method not allowed
 
     res.send("Username is " + req.params.username);
 });
 
 app.get('/api/v1/categories', function (req, res) {
     // Lsit all categories
+    // Error codes: 200- ok, 204- no content, 405- method not allowed
 
     Category.find({}, (err, cats) => {
         if (err)
@@ -65,6 +68,7 @@ app.get('/api/v1/categories', function (req, res) {
 
 app.post('/api/v1/categories', function (req, res) {
     // Add a category
+    // Error codes: 201- created, 400- bad request, 405- method not allowed
 
     req.body.forEach(cat => {
         Category.create({
@@ -84,6 +88,7 @@ app.post('/api/v1/categories', function (req, res) {
 
 app.delete('/api/v1/categories/:categoryName', function (req, res) {
     // Remove a category
+    // Error codes: 200- ok, 400- bad request, 405- method not allowed
 
     Category.deleteOne({ _id: req.params.categoryName }, function (err) {
         if (err)
@@ -96,11 +101,15 @@ app.delete('/api/v1/categories/:categoryName', function (req, res) {
 
 app.get('/api/v1/categories/:categoryName/acts', function (req, res) {
     // List acts in a category < 500
+    // Error codes: 200- ok, 204- no content, 405- method not allowed, 413- payload too large
+
     res.send("tagId is set to " + req.query.start);
 });
 
 app.get('/api/v1/categories/:categoryName/acts/size', function (req, res) {
     // Number of acts in a category
+    // Error codes: 200- ok, 204- no content, 405- method not allowed
+
 });
 
 // app.get('/api/v1/categories/{categoryName}/acts?start={startRange}&end = { endRange }', function (req, res) {
@@ -110,14 +119,19 @@ app.get('/api/v1/categories/:categoryName/acts/size', function (req, res) {
 
 app.post('/api/v1/acts/upvote', function (req, res) {
     // Upvote act
+    // Error codes: 201- created, 400- bad request, 405- method not allowed
+
 });
 
 app.delete('/api/v1/acts/:actId', function (req, res) {
     // Remove act
+    // Error codes: 200- ok, 400- bad request, 405- method not allowed
+
 });
 
 app.post('/api/v1/acts', function (req, res) {
     // Upload act
+    // Error codes: 201- created, 400- bad request, 405- method not allowed
 
     var act = new Act ({
         _id: req.body.actId,
@@ -134,7 +148,7 @@ app.post('/api/v1/acts', function (req, res) {
         if (err)
             res.status(400);
         else
-            res.status(200);
+            res.status(201);
         res.send({});
     });
 });
