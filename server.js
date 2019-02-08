@@ -127,13 +127,25 @@ app.delete('/api/v1/categories/:categoryName', function (req, res) {
     // Remove a category
     // Error codes: 200- ok, 400- bad request, 405- method not allowed
 
-    Category.deleteOne({ name: req.params.categoryName }, function (err) {
-        if (err)
+    Category.find({ name: req.params.categoryName }, (err, cats) => {
+        if(cats.length == 0)
             res.status(400);
-        else
-            res.status(200);
+        else{
+            Act.deleteMany({ category: req.params.categoryName}, (err) => {
+                if (err)
+                    res.status(400);
+                else {
+                    Category.deleteOne({ name: req.params.categoryName }, function (err) {
+                        if (err)
+                            res.status(400);
+                        else
+                            res.status(200);
+                    });
+                }
+            })
+        }
         res.send({})
-    });
+    })
 });
 
 app.get('/api/v1/categories/:categoryName/acts', function (req, res) {
@@ -176,7 +188,7 @@ app.get('/api/v1/categories/:categoryName/acts', function (req, res) {
             }
             else {
 
-                
+
 
                 res.status(400);
                 res.send(req.query.start);
@@ -198,8 +210,10 @@ app.get('/api/v1/categories/:categoryName/acts/size', function (req, res) {
     // Error codes: 200- ok, 204- no content, 405- method not allowed
 
     Category.find({ name: req.params.categoryName }, (err, cat) => {
-        if (err)
+        if (err){
             res.status(400);
+            res.send();
+        }
         else {
             if (cat.length == 0) {
                 res.status(400);
@@ -211,6 +225,7 @@ app.get('/api/v1/categories/:categoryName/acts/size', function (req, res) {
             }
 
         }
+
     });
 
 });
