@@ -9,9 +9,14 @@ mongoose.connect('mongodb://aveek:aveek123@ds221645.mlab.com:21645/selfieless');
 var Schema = mongoose.Schema;
 
 app.use(express.static(__dirname + '/public'));
-app.use(bodyParser.urlencoded({ extended: 'true' }));
-app.use(bodyParser.json());
-app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
+app.use(bodyParser.urlencoded({ extended: 'true', limit: '5mb' }));
+app.use(bodyParser.json({limit: '5mb'}));
+app.use(bodyParser.json({ type: 'application/vnd.api+json', limit: '5mb' }));
+app.use(function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    next();
+});
 
 var Act = mongoose.model('Act',{
     actId: Number,
@@ -239,6 +244,26 @@ app.post('/api/v1/acts/upvote', function (req, res) {
     // Upvote act
     // Error codes: 201- created, 400- bad request, 405- method not allowed
 
+    Act.find({ actId: req.body[0] }, (err, acts) => {
+        if (err) {
+            res.status(400);
+        }
+        else {
+            if (acts.length == 0) {
+                res.status(400);
+            }
+            else {
+                Act.findOneAndUpdate({ actId: req.body[0] }, { $set: { upvotes: acts[0].upvotes + 1 } }, (err, doc, ca) => {
+                    if (err)
+                        res.status(400);
+                    else
+                        res.status(201);
+                });
+            }
+        }
+        res.send({})
+    });
+
 });
 
 app.delete('/api/v1/acts/:actId', function (req, res) {
@@ -260,7 +285,7 @@ app.delete('/api/v1/acts/:actId', function (req, res) {
                         if (err)
                             res.status(400);
                         else
-                            res.status(201);
+                            res.status(200);
                     })
                 }
             })
