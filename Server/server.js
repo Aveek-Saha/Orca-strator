@@ -277,7 +277,7 @@ app.get('/api/v1/categories/:categoryName/acts/size', function (req, res) {
         }
         else {
             if (cat.length == 0) {
-                res.status(400);
+                res.status(204);
                 res.send({});
             }
             else {
