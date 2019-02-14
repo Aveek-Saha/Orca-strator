@@ -14,6 +14,7 @@ app.use(bodyParser.json({limit: '5mb'}));
 app.use(bodyParser.json({ type: 'application/vnd.api+json', limit: '5mb' }));
 app.use(function (req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
+    res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     next();
 });
@@ -46,24 +47,36 @@ app.get('/', function (req, res) {
 app.post('/api/v1/users', function (req, res) {
     // Add User
     // Error codes: 201- created, 400- bad request, 405- method not allowed
+    // console.log(req.body);
 
     User.find({ username: req.body.username}, (err, users) =>{
         if(users.length == 0){
-            User.create({
-                username: req.body.username,
-                password: req.body.password
-            }, (err, c) => {
-                if (err)
-                    res.status(400);
-                else
-                    res.status(201);
-            });
+            if (/^[a-fA-F0-9]{40}$/.test(req.body.password)){
+                User.create({
+                    username: req.body.username,
+                    password: req.body.password
+                }, (err, c) => {
+                    if (err)
+                        res.status(400);
+                    else
+                        res.status(201);
+                });
+            }
+            else
+                res.status(400);
+            
         }
         else
             res.status(400)
         res.send({});
     });
 });
+
+app.route('/api/v1/users')
+    .get((req, res) => { res.status(405).send() })
+    .delete((req, res) => { res.status(405).send() })
+    .put((req, res) => { res.status(405).send() })
+
 
 app.delete('/api/v1/users/:username', function (req, res) {
     // Remove user
@@ -85,6 +98,11 @@ app.delete('/api/v1/users/:username', function (req, res) {
     });
     
 });
+
+app.route('/api/v1/users/:username')
+    .get((req, res) => { res.status(405).send() })
+    .post((req, res) => { res.status(405).send() })
+    .put((req, res) => { res.status(405).send() })
 
 app.get('/api/v1/categories', function (req, res) {
     // Lsit all categories
@@ -128,6 +146,10 @@ app.post('/api/v1/categories', function (req, res) {
     res.send({})
 });
 
+app.route('/api/v1/users/:username')
+    .delete((req, res) => { res.status(405).send() })
+    .put((req, res) => { res.status(405).send() })
+
 app.delete('/api/v1/categories/:categoryName', function (req, res) {
     // Remove a category
     // Error codes: 200- ok, 400- bad request, 405- method not allowed
@@ -153,6 +175,11 @@ app.delete('/api/v1/categories/:categoryName', function (req, res) {
     })
 });
 
+app.route('/api/v1/categories/:categoryName')
+    .get((req, res) => { res.status(405).send() })
+    .post((req, res) => { res.status(405).send() })
+    .put((req, res) => { res.status(405).send() })
+
 app.get('/api/v1/categories/:categoryName/acts', function (req, res) {
     // List acts in a category < 500
     // Error codes: 200- ok, 204- no content, 405- method not allowed, 413- payload too large
@@ -163,11 +190,11 @@ app.get('/api/v1/categories/:categoryName/acts', function (req, res) {
                 Act.find({ category: req.params.categoryName }, (err, acts) => {
                     if (err){
                         res.status(400);
-                        res.send({});
+                        res.send();
                     }
-                    else if (acts.length > 500){
+                    else if (acts.length > 100){
                         res.status(413);
-                        res.send({});
+                        res.send();
                     }
                     else if (acts.length == 0) {
                         res.status(204);
@@ -192,23 +219,52 @@ app.get('/api/v1/categories/:categoryName/acts', function (req, res) {
                 })
             }
             else {
+                // res.status(400);
+                // res.send(req.query.start);
 
+                Act.find({ category: req.params.categoryName }, (err, acts) => {
+                    if (err || parseInt(req.query.start) - parseInt(req.query.end) > acts.length) {
+                        res.status(400);
+                        res.send();
+                    }
+                    else if (parseInt(req.query.start) - parseInt(req.query.end) > 100) {
+                        res.status(413);
+                        res.send();
+                    }
+                    else if (acts.length == 0) {
+                        res.status(204);
+                        res.send([]);
+                    }
+                    else {
+                        var arr = []
+                        acts.slice(parseInt(req.query.start) - parseInt(req.query.end)+1).forEach(act => {
+                            arr.push({
+                                actId: act.actId,
+                                username: act.username,
+                                timestamp: act.timestamp,
+                                caption: act.caption,
+                                upvotes: act.upvotes,
+                                imgB64: act.imgB64
+                            })
+                        })
+                        res.status(200);
+                        res.send(arr);
 
-
-                res.status(400);
-                res.send(req.query.start);
+                    }
+                })
             }
         }
         else {
             res.status(400);
             res.send(req.query.start);
-            
         }
     });
-
-    
-
 });
+
+app.route('/api/v1/categories/:categoryName/acts')
+    .delete((req, res) => { res.status(405).send() })
+    .post((req, res) => { res.status(405).send() })
+    .put((req, res) => { res.status(405).send() })
 
 app.get('/api/v1/categories/:categoryName/acts/size', function (req, res) {
     // Number of acts in a category
@@ -234,6 +290,11 @@ app.get('/api/v1/categories/:categoryName/acts/size', function (req, res) {
     });
 
 });
+
+app.route('/api/v1/categories/:categoryName/acts/size')
+    .delete((req, res) => { res.status(405).send() })
+    .post((req, res) => { res.status(405).send() })
+    .put((req, res) => { res.status(405).send() })
 
 // app.get('/api/v1/categories/{categoryName}/acts?start={startRange}&end = { endRange }', function (req, res) {
 //     // Number of acts in a given range
@@ -266,9 +327,15 @@ app.post('/api/v1/acts/upvote', function (req, res) {
 
 });
 
+app.route('/api/v1/acts/upvote')
+    .delete((req, res) => { res.status(405).send() })
+    .get((req, res) => { res.status(405).send() })
+    .put((req, res) => { res.status(405).send() })
+
 app.delete('/api/v1/acts/:actId', function (req, res) {
     // Remove act
     // Error codes: 200- ok, 400- bad request, 405- method not allowed
+
     var id = parseInt(req.params.actId)
     // console.log(id);
 
@@ -296,6 +363,11 @@ app.delete('/api/v1/acts/:actId', function (req, res) {
 
 });
 
+app.route('/api/v1/acts/:actId')
+    .post((req, res) => { res.status(405).send() })
+    .get((req, res) => { res.status(405).send() })
+    .put((req, res) => { res.status(405).send() })
+
 app.post('/api/v1/acts', function (req, res) {
     // Upload act
     // Error codes: 201- created, 400- bad request, 405- method not allowed
@@ -314,28 +386,33 @@ app.post('/api/v1/acts', function (req, res) {
                             // if (Buffer.from(req.body.imgB64, 'base64').toString('base64') === req.body.imgB64)
                             // console.log(Buffer.from(req.body.imgB64, 'base64').toString('base64') === req.body.imgB64);
                             
-                            Act.create({
-                                username: req.body.username,
-                                actId: req.body.actId,
-                                timestamp: req.body.timestamp,
-                                caption: req.body.caption,
-                                category: req.body.category,
-                                imgB64: req.body.imgB64,
-                                upvotes: 0
-                            }, (err, c) => {
-                                if (err)
-                                    res.status(400);
-                                else{
-                                    // res.status(201);
-                                
-                                    Category.findOneAndUpdate({ name: req.body.category }, { $set: { count: cats[0].count+1 } }, (err, doc, ca) => {
-                                        if (err)
-                                            res.status(400);
-                                        else 
-                                            res.status(201);
-                                    })
-                                }
-                            });
+                            if (/^([0-9]{2}-[0-9]{2}-[0-9]{4}:[0-9]{2}-[0-9]{2}-[0-9]{2}$)/.test(req.body.timestamp)) {
+                                Act.create({
+                                    username: req.body.username,
+                                    actId: req.body.actId,
+                                    timestamp: req.body.timestamp,
+                                    caption: req.body.caption,
+                                    category: req.body.category,
+                                    imgB64: req.body.imgB64,
+                                    upvotes: 0
+                                }, (err, c) => {
+                                    if (err)
+                                        res.status(400);
+                                    else {
+                                        // res.status(201);
+
+                                        Category.findOneAndUpdate({ name: req.body.category }, { $set: { count: cats[0].count + 1 } }, (err, doc, ca) => {
+                                            if (err)
+                                                res.status(400);
+                                            else
+                                                res.status(201);
+                                        })
+                                    }
+                                });
+                            }
+                            else
+                                res.status(400)
+                            
                         }
                     })
                 }
@@ -345,6 +422,44 @@ app.post('/api/v1/acts', function (req, res) {
         else
             res.status(400);
         res.send({})        
+    });
+});
+
+app.route('/api/v1/acts/:actId')
+    .delete((req, res) => { res.status(405).send() })
+    .put((req, res) => { res.status(405).send() })
+
+app.get('/api/v1/acts', function (req, res) {
+    // Get all acts
+    // Error codes: 201- created, 400- bad request, 405- method not allowed
+
+    Act.find({}, (err, acts) => {
+        res.send(acts)
+    });
+});
+
+app.get('/api/v1/acts/upvote/:actId', function (req, res) {
+    // Get Upvotes for an act
+    // Error codes: 201- created, 400- bad request, 405- method not allowed
+
+    var id = parseInt(req.params.actId)
+
+    Act.find({ actId: id }, (err, acts) => {
+        if (err) {
+            res.status(400);
+            res.send("Cannot able")
+        }
+        else {
+            if (acts.length == 0) {
+                res.status(400);
+                res.send("Cannot able")
+            }
+            else {
+                res.send({
+                    upvotes: acts[0].upvotes
+                })
+            }
+        }
     });
 });
 
