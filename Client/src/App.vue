@@ -178,9 +178,9 @@ export default {
     return {
       categories: [],
       acts: [],
-      actURL:"http://localhost:8000/api/v1/acts",
-      catURL: "http://localhost:8000/api/v1/categories",
-      userUrl: "http://localhost:8000/api/v1/users",
+      actURL:"http://3.208.136.128/api/v1/acts",
+      catURL: "http://3.208.136.128/api/v1/categories",
+      userUrl: "http://3.208.136.128/api/v1/users",
       username: "",
       userForm: "",
       password: "",
