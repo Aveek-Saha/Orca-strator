@@ -56,19 +56,25 @@ app.post('/api/v1/users', function (req, res) {
                     username: req.body.username,
                     password: req.body.password
                 }, (err, c) => {
-                    if (err)
-                        res.status(400);
-                    else
-                        res.status(201);
+                        if (err) {
+                            res.status(400)
+                            res.send();
+                        }
+                    else {
+                        res.status(201)
+                        res.send({});
+                    }
                 });
             }
-            else
-                res.status(400);
-            
+            else {
+                res.status(400)
+                res.send();
+            }
         }
-        else
+        else {
             res.status(400)
-        res.send({});
+            res.send();
+        }
     });
 });
 
@@ -113,10 +119,15 @@ app.get('/api/v1/categories', function (req, res) {
             res.status(400);
         else{
             var arr = {};
-            cats.forEach(cat => {
-                arr[cat.name] = cat.count;
-            })
-            res.status(200).send(arr);
+            if(cats.length == 0) {
+                res.status(204).send({});
+            }
+            else {
+                cats.forEach(cat => {
+                    arr[cat.name] = cat.count;
+                })
+                res.status(200).send(arr);
+            }
         }
     });
 });
@@ -223,11 +234,12 @@ app.get('/api/v1/categories/:categoryName/acts', function (req, res) {
                 // res.send(req.query.start);
 
                 Act.find({ category: req.params.categoryName }, (err, acts) => {
-                    if (err || parseInt(req.query.start) - parseInt(req.query.end) > acts.length) {
+                    if (err || parseInt(req.query.end) - parseInt(req.query.start) > acts.length
+                        || parseInt(req.query.start) > acts.length || parseInt(req.query.end) > acts.length) {
                         res.status(400);
                         res.send();
                     }
-                    else if (parseInt(req.query.start) - parseInt(req.query.end) > 100) {
+                    else if (parseInt(req.query.end) - parseInt(req.query.start) > 100) {
                         res.status(413);
                         res.send();
                     }
@@ -237,7 +249,8 @@ app.get('/api/v1/categories/:categoryName/acts', function (req, res) {
                     }
                     else {
                         var arr = []
-                        acts.slice(parseInt(req.query.start) - parseInt(req.query.end)+1).forEach(act => {
+                        acts.slice(parseInt(req.query.start)-1,  parseInt(req.query.end))
+                        .forEach(act => {
                             arr.push({
                                 actId: act.actId,
                                 username: act.username,
@@ -256,7 +269,7 @@ app.get('/api/v1/categories/:categoryName/acts', function (req, res) {
         }
         else {
             res.status(400);
-            res.send(req.query.start);
+            res.send();
         }
     });
 });
@@ -277,8 +290,8 @@ app.get('/api/v1/categories/:categoryName/acts/size', function (req, res) {
         }
         else {
             if (cat.length == 0) {
-                res.status(204);
-                res.send({});
+                res.status(400);
+                res.send();
             }
             else {
                 counts = [cat[0].count];
@@ -376,42 +389,54 @@ app.post('/api/v1/acts', function (req, res) {
         if(act.length == 0){
 
             User.find({ username: req.body.username}, (err, users) =>{
-                if (users.length == 0)
+                if (users.length == 0){
                     res.status(400);
+                    res.send();
+                }
                 else{
-                    Category.find({ name: req.body.category }, (err, cats) => {
-                        if (cats.length == 0)
+                    Category.find({ name: req.body.categoryName }, (err, cats) => {
+                        if (cats.length == 0){
                             res.status(400);
+                            res.send();
+                        }
                         else{
-                            // if (Buffer.from(req.body.imgB64, 'base64').toString('base64') === req.body.imgB64)
-                            // console.log(Buffer.from(req.body.imgB64, 'base64').toString('base64') === req.body.imgB64);
                             
-                            if (/^([0-9]{2}-[0-9]{2}-[0-9]{4}:[0-9]{2}-[0-9]{2}-[0-9]{2}$)/.test(req.body.timestamp)) {
+                            if (/^([0-9]{2}-[0-9]{2}-[0-9]{4}:[0-9]{2}-[0-9]{2}-[0-9]{2}$)/.test(req.body.timestamp) && req.body.upvotes == null ) {
+                                console.log(req.body.upvotes);
+                                
                                 Act.create({
                                     username: req.body.username,
                                     actId: req.body.actId,
                                     timestamp: req.body.timestamp,
                                     caption: req.body.caption,
-                                    category: req.body.category,
+                                    category: req.body.categoryName,
                                     imgB64: req.body.imgB64,
                                     upvotes: 0
                                 }, (err, c) => {
-                                    if (err)
+                                    if (err){
                                         res.status(400);
+                                        res.send();
+                                    }
                                     else {
                                         // res.status(201);
 
-                                        Category.findOneAndUpdate({ name: req.body.category }, { $set: { count: cats[0].count + 1 } }, (err, doc, ca) => {
-                                            if (err)
+                                        Category.findOneAndUpdate({ name: req.body.categoryName }, { $set: { count: cats[0].count + 1 } }, (err, doc, ca) => {
+                                            if (err){
                                                 res.status(400);
-                                            else
+                                                res.send();
+                                            }
+                                            else{
                                                 res.status(201);
+                                                res.send({});
+                                            }
                                         })
                                     }
                                 });
                             }
-                            else
-                                res.status(400)
+                            else{
+                                res.status(400);
+                                res.send();
+                            }
                             
                         }
                     })
@@ -419,9 +444,10 @@ app.post('/api/v1/acts', function (req, res) {
             })
 
         }
-        else
+        else{
             res.status(400);
-        res.send({})        
+            res.send();          
+        }
     });
 });
 
@@ -434,9 +460,13 @@ app.get('/api/v1/acts', function (req, res) {
     // Error codes: 201- created, 400- bad request, 405- method not allowed
 
     Act.find({}, (err, acts) => {
-        res.send(acts)
+        res.status(405).send(acts)
     });
 });
+
+app.route('/api/v1/acts')
+    .delete((req, res) => { res.status(405).send() })
+    .put((req, res) => { res.status(405).send() })
 
 app.get('/api/v1/acts/upvote/:actId', function (req, res) {
     // Get Upvotes for an act

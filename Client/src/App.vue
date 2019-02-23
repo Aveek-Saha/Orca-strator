@@ -240,7 +240,7 @@ export default {
                 actId: Math.floor(1000 + Math.random() * 9000),
                 username: that.username,
                 timestamp: that.getDate(),
-                category: that.formCategory,
+                categoryName: that.formCategory,
                 caption: that.content,
                 imgB64: that.image
             })
