@@ -61,7 +61,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" @click="addCategory" data-dismiss="modal">Add</button>
+                    <button type="button" class="btn btn-success" @click="addCategory" data-dismiss="modal">Add</button>
                 </div>
             </div>
         </div>
@@ -93,7 +93,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" @click="addUser" data-dismiss="modal">Add</button>
+                    <button type="button" class="btn btn-success" @click="addUser" data-dismiss="modal">Add</button>
                 </div>
             </div>
         </div>
@@ -136,7 +136,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" @click="postAct" data-dismiss="modal">Add</button>
+                    <button type="button" class="btn btn-success" @click="postAct" data-dismiss="modal">Add</button>
                 </div>
             </div>
         </div>
@@ -178,9 +178,9 @@ export default {
     return {
       categories: [],
       acts: [],
-      actURL:"http://3.208.136.128/api/v1/acts",
-      catURL: "http://3.208.136.128/api/v1/categories",
-      userUrl: "http://3.208.136.128/api/v1/users",
+      actURL:"http://localhost:8000/api/v1/acts",
+      catURL: "http://localhost:8000/api/v1/categories",
+      userUrl: "http://localhost:8000/api/v1/users",
       username: "",
       userForm: "",
       password: "",
@@ -261,13 +261,13 @@ export default {
     addUser: function(){
         var that = this
         
-        if(this.username !="" && this.password!= ""){
+        if(this.userForm !="" && this.password!= ""){
             axios.post(this.userURL , {
                 username: that.userForm,
                 password: that.password
             })
             .then(function (response) {
-                console.log(response.data);
+                console.log(response);
                 // that.getActs()
             })
             .catch(function (error) {

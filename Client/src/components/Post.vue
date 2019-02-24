@@ -32,7 +32,7 @@ export default {
   data() {
     return {
       
-      actURL:"http://3.208.136.128/api/v1/acts",
+      actURL:"http://localhost:8000/api/v1/acts",
     }
   },
   methods: {

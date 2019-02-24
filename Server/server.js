@@ -460,7 +460,7 @@ app.get('/api/v1/acts', function (req, res) {
     // Error codes: 201- created, 400- bad request, 405- method not allowed
 
     Act.find({}, (err, acts) => {
-        res.status(405).send(acts)
+        res.send(acts)
     });
 });
 
