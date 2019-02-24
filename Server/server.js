@@ -136,30 +136,39 @@ app.post('/api/v1/categories', function (req, res) {
     // Add a category
     // Error codes: 201- created, 400- bad request, 405- method not allowed
 
-    req.body.forEach(cat => {
+    var cat = req.body[0];
+    // req.body.forEach(cat => {
         Category.find({ name: cat }, (err, cats) => {
             if(cats.length == 0){
                 Category.create({
                     count: 0,
                     name: cat
                 }, (err, c) => {
-                    if (err)
+                    if (err){
                         res.status(400);
-                    else
+                        res.send()
+
+                    }
+                    else{
                         res.status(201);
+                        res.send({})
+
+                    }
                 });
             }
-            else
+            else{
                 res.status(400);
+                res.send()
+            }
         });
         
-    });
-    res.send({})
+    // });
+    // res.send({})
 });
 
-app.route('/api/v1/users/:username')
+app.route('/api/v1/categories')
+    // .get((req, res) => { res.status(405).send() })
     .delete((req, res) => { res.status(405).send() })
-    .put((req, res) => { res.status(405).send() })
 
 app.delete('/api/v1/categories/:categoryName', function (req, res) {
     // Remove a category
@@ -249,7 +258,7 @@ app.get('/api/v1/categories/:categoryName/acts', function (req, res) {
                     }
                     else {
                         var arr = []
-                        acts.slice(parseInt(req.query.start)-1,  parseInt(req.query.end))
+                        acts.reverse().slice(parseInt(req.query.start)-1,  parseInt(req.query.end))
                         .forEach(act => {
                             arr.push({
                                 actId: act.actId,
@@ -400,9 +409,10 @@ app.post('/api/v1/acts', function (req, res) {
                             res.send();
                         }
                         else{
+                            // console.log(/^[a-zA-Z0-9]*==$/.test(req.body.imgB64));
                             
-                            if (/^([0-9]{2}-[0-9]{2}-[0-9]{4}:[0-9]{2}-[0-9]{2}-[0-9]{2}$)/.test(req.body.timestamp) && req.body.upvotes == null ) {
-                                console.log(req.body.upvotes);
+                            
+                            if (/^([0-9]{2}-[0-9]{2}-[0-9]{4}:[0-9]{2}-[0-9]{2}-[0-9]{2}$)/.test(req.body.timestamp) && req.body.upvotes == null && /^[a-zA-Z0-9]*==$/.test(req.body.imgB64)) {
                                 
                                 Act.create({
                                     username: req.body.username,
@@ -459,9 +469,10 @@ app.get('/api/v1/acts', function (req, res) {
     // Get all acts
     // Error codes: 201- created, 400- bad request, 405- method not allowed
 
-    Act.find({}, (err, acts) => {
-        res.send(acts)
-    });
+    // Act.find({}, (err, acts) => {
+    //     res.send(acts)
+    // });
+    res.status(405).send()
 });
 
 app.route('/api/v1/acts')
