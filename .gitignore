@@ -36,6 +36,8 @@ Client/dist/
 # Dependency directories
 Server/node_modules/
 Client/node_modules/
+Acts/node_modules/
+Users/node_modules/
 jspm_packages/
 
 # TypeScript v1 declaration files
