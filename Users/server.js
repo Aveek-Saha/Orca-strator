@@ -81,7 +81,11 @@ app.get('/api/v1/users', function (req, res) {
     User.find({}, (err, users) => {
         if (users.length != 0) {
             res.status(200);
-            res.send(users);
+            var arr = []
+            users.forEach(user => {
+                arr.push(user.username)
+            });
+            res.send(arr);
         }
         else {
             res.status(204)
@@ -122,5 +126,5 @@ app.route('/api/v1/users/:username')
     .put((req, res) => { res.status(405).send() })
 
 
-app.listen(8000);
+app.listen(5000);
 console.log("Server started");

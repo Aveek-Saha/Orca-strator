@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const axios = require('axios');
 const app = express();
 
 const mongoose = require('mongoose');
@@ -326,62 +327,72 @@ app.post('/api/v1/acts', function (req, res) {
     Act.find({ actId: req.body.actId}, (err, act) => {
         if(act.length == 0){
 
-            User.find({ username: req.body.username}, (err, users) =>{
-                if (users.length == 0){
-                    res.status(400);
-                    res.send();
-                }
-                else{
-                    Category.find({ name: req.body.categoryName }, (err, cats) => {
-                        if (cats.length == 0){
-                            res.status(400);
-                            res.send();
-                        }
-                        else{
-                            // console.log(/^[a-zA-Z0-9]*==$/.test(req.body.imgB64));
-                            
-                            
-                            if (/^([0-9]{2}-[0-9]{2}-[0-9]{4}:[0-9]{2}-[0-9]{2}-[0-9]{2}$)/.test(req.body.timestamp) && req.body.upvotes == null && /^[a-zA-Z0-9]*==$/.test(req.body.imgB64)) {
-                                
-                                Act.create({
-                                    username: req.body.username,
-                                    actId: req.body.actId,
-                                    timestamp: req.body.timestamp,
-                                    caption: req.body.caption,
-                                    category: req.body.categoryName,
-                                    imgB64: req.body.imgB64,
-                                    upvotes: 0
-                                }, (err, c) => {
-                                    if (err){
-                                        res.status(400);
-                                        res.send();
-                                    }
-                                    else {
-                                        // res.status(201);
+            // Use Users microservice
+            // Ip addr for Users: 3.82.39.172
 
-                                        Category.findOneAndUpdate({ name: req.body.categoryName }, { $set: { count: cats[0].count + 1 } }, (err, doc, ca) => {
-                                            if (err){
-                                                res.status(400);
-                                                res.send();
-                                            }
-                                            else{
-                                                res.status(201);
-                                                res.send({});
-                                            }
-                                        })
-                                    }
-                                });
-                            }
-                            else{
+            axios.get('http://localhost:5000/api/v1/users')
+                .then(function (response) {
+                    let users = response.data
+                    console.log(users.indexOf(req.body.username));
+                    
+                    if (users.length == 0) {
+                        res.status(400);
+                        res.send();
+                    }
+                    else if (users.indexOf(req.body.username) == -1){
+                        res.status(400);
+                        res.send();
+                    }
+                    else {
+                        Category.find({ name: req.body.categoryName }, (err, cats) => {
+                            if (cats.length == 0) {
                                 res.status(400);
                                 res.send();
                             }
-                            
-                        }
-                    })
-                }
-            })
+                            else {
+                                if (/^([0-9]{2}-[0-9]{2}-[0-9]{4}:[0-9]{2}-[0-9]{2}-[0-9]{2}$)/.test(req.body.timestamp) && req.body.upvotes == null && /^[a-zA-Z0-9]*==$/.test(req.body.imgB64)) {
 
+                                    Act.create({
+                                        username: req.body.username,
+                                        actId: req.body.actId,
+                                        timestamp: req.body.timestamp,
+                                        caption: req.body.caption,
+                                        category: req.body.categoryName,
+                                        imgB64: req.body.imgB64,
+                                        upvotes: 0
+                                    }, (err, c) => {
+                                        if (err) {
+                                            res.status(400);
+                                            res.send();
+                                        }
+                                        else {
+                                            Category.findOneAndUpdate({ name: req.body.categoryName }, { $set: { count: cats[0].count + 1 } }, (err, doc, ca) => {
+                                                if (err) {
+                                                    res.status(400);
+                                                    res.send();
+                                                }
+                                                else {
+                                                    res.status(201);
+                                                    res.send({});
+                                                }
+                                            })
+                                        }
+                                    });
+                                }
+                                else {
+                                    res.status(400);
+                                    res.send();
+                                }
+                            }
+                        })
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    
+                    res.status(400);
+                    res.send(); 
+                });
         }
         else{
             res.status(400);
