@@ -39,10 +39,33 @@ var User = mongoose.model('User', {
     password: String
 });
 
+var count = 0;
+
+app.get('/api/v1/_count', function (req, res) {
+    // Get number of requests
+    // Error codes: 200- ok, 405- method not allowed
+
+    res.status(200)
+    res.send([count]);
+    
+});
+
+app.delete('/api/v1/_count', function (req, res) {
+    // Get number of requests
+    // Error codes: 200- ok, 405- method not allowed
+
+    count = 0;
+    res.status(200)
+    res.send({});
+
+});
+
 app.post('/api/v1/users', function (req, res) {
     // Add User
     // Error codes: 201- created, 400- bad request, 405- method not allowed
     // console.log(req.body);
+
+    count++;
 
     User.find({ username: req.body.username}, (err, users) =>{
         if(users.length == 0){
@@ -78,6 +101,8 @@ app.get('/api/v1/users', function (req, res) {
     // Error codes: 200- ok, 204- empty, 405- method not allowed
     // console.log(req.body);
 
+    count++;
+
     User.find({}, (err, users) => {
         if (users.length != 0) {
             res.status(200);
@@ -102,6 +127,8 @@ app.route('/api/v1/users')
 app.delete('/api/v1/users/:username', function (req, res) {
     // Remove user
     // Error codes: 200- ok, 400- bad request, 405- method not allowed
+
+    count ++;
 
     User.find({ username: req.params.username }, (err, users) => {
         if (users.length == 0) {

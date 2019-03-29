@@ -40,9 +40,32 @@ var User = mongoose.model('User', {
     password: String
 });
 
+var count = 0;
+
+app.get('/api/v1/_count', function (req, res) {
+    // Get number of requests
+    // Error codes: 200- ok, 405- method not allowed
+
+    res.status(200)
+    res.send([count]);
+
+});
+
+app.delete('/api/v1/_count', function (req, res) {
+    // Get number of requests
+    // Error codes: 200- ok, 405- method not allowed
+
+    count = 0;
+    res.status(200)
+    res.send({});
+
+});
+
 app.get('/api/v1/categories', function (req, res) {
     // Lsit all categories
     // Error codes: 200- ok, 204- no content, 405- method not allowed
+    
+    count++;
 
     Category.find({}, (err, cats) => {
         if (err)
@@ -65,6 +88,8 @@ app.get('/api/v1/categories', function (req, res) {
 app.post('/api/v1/categories', function (req, res) {
     // Add a category
     // Error codes: 201- created, 400- bad request, 405- method not allowed
+
+    count++;
 
     var cat = req.body[0];
     // req.body.forEach(cat => {
@@ -104,6 +129,8 @@ app.delete('/api/v1/categories/:categoryName', function (req, res) {
     // Remove a category
     // Error codes: 200- ok, 400- bad request, 405- method not allowed
 
+    count++;
+
     Category.find({ name: req.params.categoryName }, (err, cats) => {
         if(cats.length == 0)
             res.status(400);
@@ -133,6 +160,8 @@ app.route('/api/v1/categories/:categoryName')
 app.get('/api/v1/categories/:categoryName/acts', function (req, res) {
     // List acts in a category < 500
     // Error codes: 200- ok, 204- no content, 405- method not allowed, 413- payload too large
+
+    count++;
 
     Category.find({ name: req.params.categoryName }, (err, cats) => {
         if (cats.length != 0) {
@@ -222,6 +251,8 @@ app.get('/api/v1/categories/:categoryName/acts/size', function (req, res) {
     // Number of acts in a category
     // Error codes: 200- ok, 204- no content, 405- method not allowed
 
+    count++;
+
     Category.find({ name: req.params.categoryName }, (err, cat) => {
         if (err){
             res.status(400);
@@ -257,6 +288,8 @@ app.post('/api/v1/acts/upvote', function (req, res) {
     // Upvote act
     // Error codes: 201- created, 400- bad request, 405- method not allowed
 
+    count++;
+
     Act.find({ actId: req.body[0] }, (err, acts) => {
         if (err) {
             res.status(400);
@@ -287,6 +320,8 @@ app.route('/api/v1/acts/upvote')
 app.delete('/api/v1/acts/:actId', function (req, res) {
     // Remove act
     // Error codes: 200- ok, 400- bad request, 405- method not allowed
+
+    count++;
 
     var id = parseInt(req.params.actId)
     // console.log(id);
@@ -320,9 +355,25 @@ app.route('/api/v1/acts/:actId')
     .get((req, res) => { res.status(405).send() })
     .put((req, res) => { res.status(405).send() })
 
+
+app.get('/api/v1/acts/count', function (req, res) {
+    // Get number of acts
+    // Error codes: 200- ok, 405- method not allowed
+    // console.log(req.body);
+
+    count++;
+
+    Act.find({}, (err, acts) => {
+        res.status(200);
+        res.send([acts.length]);
+    });
+});
+
 app.post('/api/v1/acts', function (req, res) {
     // Upload act
     // Error codes: 201- created, 400- bad request, 405- method not allowed
+
+    count++;
 
     Act.find({ actId: req.body.actId}, (err, act) => {
         if(act.length == 0){
@@ -330,7 +381,11 @@ app.post('/api/v1/acts', function (req, res) {
             // Use Users microservice
             // Ip addr for Users: 3.82.39.172
 
-            axios.get('http://3.82.39.172:8080/api/v1/users')
+            axios.get({
+		  method: 'get',
+		  url: 'http://3.82.39.172/api/v1/users',
+		  origin: '3.209.208.104'
+		})
                 .then(function (response) {
                     let users = response.data
                     console.log(users.indexOf(req.body.username));
