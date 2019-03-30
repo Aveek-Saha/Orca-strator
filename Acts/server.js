@@ -380,11 +380,7 @@ app.post('/api/v1/acts', function (req, res) {
             // Use Users microservice
             // Ip addr for Users: 3.82.39.172
 
-            axios({
-		  method: 'get',
-		  url: 'http://3.82.39.172:8080/api/v1/users',
-		  origin: '3.209.208.104'
-		})
+            axios.get('http://3.82.39.172:8080/api/v1/users')
                 .then(function (response) {
                     let users = response.data
                     console.log(users.indexOf(req.body.username));
