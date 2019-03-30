@@ -352,7 +352,6 @@ app.delete('/api/v1/acts/:actId', function (req, res) {
 
 app.route('/api/v1/acts/:actId')
     .post((req, res) => { res.status(405).send() })
-    .get((req, res) => { res.status(405).send() })
     .put((req, res) => { res.status(405).send() })
 
 
