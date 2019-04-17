@@ -21,6 +21,10 @@
     "axios": "^0.18.0",
     "body-parser": "^1.18.3",
     "dockerode": "^2.5.8",
-    "express": "^4.16.4"
+    "express": "^4.16.4",
+    "http-proxy": "^1.17.0"
+  },
+  "devDependencies": {
+    "http-proxy-middleware": "^0.19.1"
   }
 }

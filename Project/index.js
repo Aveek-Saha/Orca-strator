@@ -2,66 +2,260 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const axios = require('axios');
 const Docker = require('dockerode');
+const httpProxy = require('http-proxy');
+// const proxy = require('http-proxy-middleware');
 const app = express();
 
 
-app.use(express.static(__dirname + '/public'));
-app.use(bodyParser.urlencoded({ extended: 'true', limit: '5mb' }));
-app.use(bodyParser.json({ limit: '5mb' }));
-app.use(bodyParser.json({ type: 'application/vnd.api+json', limit: '5mb' }));
-app.use(function (req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    next();
-});
+// app.use(express.static(__dirname + '/public'));
+// app.use(bodyParser.urlencoded({ extended: 'true', limit: '5mb' }));
+// app.use(bodyParser.json({ limit: '5mb' }));
+// app.use(bodyParser.json({ type: 'application/vnd.api+json', limit: '5mb' }));
+// app.use(function (req, res, next) {
+//     res.header('Access-Control-Allow-Origin', '*');
+//     res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
+//     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+//     next();
+// });
 
 var docker = new Docker(); 
-
+var acts_url = "http://localhost"
 // containers will contain obj in the format of {container,port}
 var containers = [];
 
-// docker.createContainer({
-//     Image: 'acts',
-//     "HostConfig": {
-//         "PortBindings": {
-//             "8000/tcp": [
-//                 {
-//                     "HostPort": "8080"
-//                 }
-//             ]
-//         }
-//     }
-// }).then(function (container) {
-//     return container.start();
-// }).then(function (container) {
-//     console.log(container);
-    
-//     return container;
-// }).then(function (container) {
-//     return container.stop();
-// }).then(function (container) {
-//     return container.remove();
-// }).then(function (data) {
-//     console.log('container removed');
-// }).catch(function (err) {
-//     console.log(err);
-// });
+var ports = ['8001', '8002', '8003', '8004', '8005', '8006', '8007', '8008', '8009', '8010', '8011' ]
+
+var i = 0;
+var scale_count = 0;
+var total_count = 0
+
+
+function addInstance() {
+    free_port = ports.pop()
+
+    docker.createContainer({
+        Image: 'acts',
+        "HostConfig": {
+            "PortBindings": {
+                "8000/tcp": [
+                    {
+                        "HostPort": free_port
+                    }
+                ]
+            }
+        }
+    }).then(function (container) {
+        return container.start();
+    }).then(function (container) {
+        console.log(container);
+
+        containers.push({"container": container, "port": free_port})
+
+        return container;
+    }).catch(function (err) {
+        console.log(err);
+    });
+}
+
+function removeInstance(cont) {
+    cont.container.stop();
+
+    containers.splice(containers.findIndex(function (i) {
+        return i.port == cont.port;
+    }), 1);
+
+    ports.push(cont.port);
+}
+
+// There should be 1 instance running
+// addInstance();
 
 function scaling(params) {
+
+    var len = containers.length;
+    if (scale_count < 20) { 
+        if (len == 1) return;
+        else if (len > 1) {
+            for (let j = 1; j < len; j++) {
+                removeInstance(containers[j]);
+            }
+        }
+        else if (len < 1) {
+            addInstance();
+        }
+    }
+    else if (scale_count >= 20 && scale_count < 40) {
+        var num = 2;
+        if (len == num) return;
+        else if (len > num) {
+            for (let j = 0; j < len - num; j++) {
+                removeInstance(containers[j]);
+            }
+        }
+        else if (len < num) {
+            for (let j = 0; j < num - len; j++) {
+                addInstance();
+            }
+        }
+    }
+    else if (scale_count >= 40 && scale_count < 60) { 
+        var num = 3;
+        if (len == num) return;
+        else if (len > num) {
+            for (let j = 0; j < len - num; j++) {
+                removeInstance(containers[j]);
+            }
+        }
+        else if (len < num) {
+            for (let j = 0; j < num - len; j++) {
+                addInstance();
+            }
+        }
+    }
+    else if (scale_count >= 60 && scale_count < 80) { 
+        var num = 4;
+        if (len == num) return;
+        else if (len > num) {
+            for (let j = 0; j < len - num; j++) {
+                removeInstance(containers[j]);
+            }
+        }
+        else if (len < num) {
+            for (let j = 0; j < num - len; j++) {
+                addInstance();
+            }
+        }
+    }
+    else if (scale_count >= 80 && scale_count < 100) { 
+        var num = 5;
+        if (len == num) return;
+        else if (len > num) {
+            for (let j = 0; j < len - num; j++) {
+                removeInstance(containers[j]);
+            }
+        }
+        else if (len < num) {
+            for (let j = 0; j < num - len; j++) {
+                addInstance();
+            }
+        }
+    }
+    else if (scale_count >= 100 && scale_count < 120) { 
+        var num = 6;
+        if (len == num) return;
+        else if (len > num) {
+            for (let j = 0; j < len - num; j++) {
+                removeInstance(containers[j]);
+            }
+        }
+        else if (len < num) {
+            for (let j = 0; j < num - len; j++) {
+                addInstance();
+            }
+        }
+    }
+    else if (scale_count >= 140 && scale_count < 160) { 
+        var num = 7;
+        if (len == num) return;
+        else if (len > num) {
+            for (let j = 0; j < len - num; j++) {
+                removeInstance(containers[j]);
+            }
+        }
+        else if (len < num) {
+            for (let j = 0; j < num - len; j++) {
+                addInstance();
+            }
+        }
+    }
+    else if (scale_count >= 160 && scale_count < 180) { 
+        var num = 8;
+        if (len == num) return;
+        else if (len > num) {
+            for (let j = 0; j < len - num; j++) {
+                removeInstance(containers[j]);
+            }
+        }
+        else if (len < num) {
+            for (let j = 0; j < num - len; j++) {
+                addInstance();
+            }
+        }
+    }
+    else if (scale_count >= 180 && scale_count < 200) { 
+        var num = 9;
+        if (len == num) return;
+        else if (len > num) {
+            for (let j = 0; j < len - num; j++) {
+                removeInstance(containers[j]);
+            }
+        }
+        else if (len < num) {
+            for (let j = 0; j < num - len; j++) {
+                addInstance();
+            }
+        }
+    }
+    else if (scale_count >= 200 && scale_count < 220) { 
+        var num = 10;
+        if (len == num) return;
+        else if (len > num) {
+            for (let j = 0; j < len - num; j++) {
+                removeInstance(containers[j]);
+            }
+        }
+        else if (len < num) {
+            for (let j = 0; j < num - len; j++) {
+                addInstance();
+            }
+        }
+    }
     
+    scale_count = 0;
 }
 
 // Function to check health
-// function healthCheck() {
-//     axios.get('/api/v1/_health')
-// }
+function healthCheck() {
+    
+
+    containers.forEach(cont => {
+        axios.get(acts_url + '/api/v1/_health:' + cont.port)
+            .then(function (response) {
+                console.log(response);
+
+            })
+            .catch(function (error) {
+                console.log(error);
+
+                removeInstance(cont)
+
+                addInstance();
+            });
+
+    })
+
+}
 
 // setInterval(healthCheck, 1000);
 
 
 
 
+httpProxy.createServer(function (req, res, proxy) {
+    proxy.proxyRequest(req, res, acts_url + ':' + containers[i].port);
 
-app.listen(8000);
+    total_count++;
+    if (total_count == 1){
+        // setInterval(scaling, 2*60*1000);
+    }
+
+    i = (i + 1) % containers.length;
+    scale_count++;
+}).listen(8000);
+
+// app.use(
+//   '/',
+//   proxy({ target: addresses[i].host + ':' + toString(addresses[i].port) })
+// );
+// app.listen(3000);
 console.log("Server started");
