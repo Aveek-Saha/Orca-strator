@@ -41,6 +41,39 @@ var User = mongoose.model('User', {
 });
 
 var count = 0;
+var crashed = false;
+
+app.get('/api/v1/_health', function (req, res) {
+    // Get number of requests
+    // Error codes: 200- ok, 405- method not allowed
+
+    if(crashed){
+        res.status(500)
+        res.send();
+        return;
+    }
+
+    res.status(200)
+    res.send();
+
+});
+
+app.post('/api/v1/_crash', function (req, res) {
+    // Get number of requests
+    // Error codes: 200- ok, 405- method not allowed
+
+    if (crashed) {
+        res.status(500)
+        res.send();
+        return;
+    }
+
+    crashed = true;
+
+    res.status(200)
+    res.send();
+
+});
 
 app.get('/api/v1/_count', function (req, res) {
     // Get number of requests
@@ -55,6 +88,12 @@ app.delete('/api/v1/_count', function (req, res) {
     // Get number of requests
     // Error codes: 200- ok, 405- method not allowed
 
+    if (crashed) {
+        res.status(500)
+        res.send();
+        return;
+    }
+
     count = 0;
     res.status(200)
     res.send({});
@@ -64,6 +103,12 @@ app.delete('/api/v1/_count', function (req, res) {
 app.get('/api/v1/categories', function (req, res) {
     // Lsit all categories
     // Error codes: 200- ok, 204- no content, 405- method not allowed
+
+    if (crashed) {
+        res.status(500)
+        res.send();
+        return;
+    }
     
     count++;
 
@@ -88,6 +133,12 @@ app.get('/api/v1/categories', function (req, res) {
 app.post('/api/v1/categories', function (req, res) {
     // Add a category
     // Error codes: 201- created, 400- bad request, 405- method not allowed
+
+    if (crashed) {
+        res.status(500)
+        res.send();
+        return;
+    }
 
     count++;
 
@@ -129,6 +180,12 @@ app.delete('/api/v1/categories/:categoryName', function (req, res) {
     // Remove a category
     // Error codes: 200- ok, 400- bad request, 405- method not allowed
 
+    if (crashed) {
+        res.status(500)
+        res.send();
+        return;
+    }
+
     count++;
 
     Category.find({ name: req.params.categoryName }, (err, cats) => {
@@ -160,6 +217,12 @@ app.route('/api/v1/categories/:categoryName')
 app.get('/api/v1/categories/:categoryName/acts', function (req, res) {
     // List acts in a category < 500
     // Error codes: 200- ok, 204- no content, 405- method not allowed, 413- payload too large
+
+    if (crashed) {
+        res.status(500)
+        res.send();
+        return;
+    }
 
     count++;
 
@@ -251,6 +314,12 @@ app.get('/api/v1/categories/:categoryName/acts/size', function (req, res) {
     // Number of acts in a category
     // Error codes: 200- ok, 204- no content, 405- method not allowed
 
+    if (crashed) {
+        res.status(500)
+        res.send();
+        return;
+    }
+
     count++;
 
     Category.find({ name: req.params.categoryName }, (err, cat) => {
@@ -288,6 +357,12 @@ app.post('/api/v1/acts/upvote', function (req, res) {
     // Upvote act
     // Error codes: 201- created, 400- bad request, 405- method not allowed
 
+    if (crashed) {
+        res.status(500)
+        res.send();
+        return;
+    }
+
     count++;
 
     Act.find({ actId: req.body[0] }, (err, acts) => {
@@ -320,6 +395,12 @@ app.route('/api/v1/acts/upvote')
 app.delete('/api/v1/acts/:actId', function (req, res) {
     // Remove act
     // Error codes: 200- ok, 400- bad request, 405- method not allowed
+
+    if (crashed) {
+        res.status(500)
+        res.send();
+        return;
+    }
 
     count++;
 
@@ -360,6 +441,12 @@ app.get('/api/v1/acts/count', function (req, res) {
     // Error codes: 200- ok, 405- method not allowed
     // console.log(req.body);
 
+    if (crashed) {
+        res.status(500)
+        res.send();
+        return;
+    }
+
     count++;
 
     Act.find({}, (err, acts) => {
@@ -371,6 +458,12 @@ app.get('/api/v1/acts/count', function (req, res) {
 app.post('/api/v1/acts', function (req, res) {
     // Upload act
     // Error codes: 201- created, 400- bad request, 405- method not allowed
+
+    if (crashed) {
+        res.status(500)
+        res.send();
+        return;
+    }
 
     count++;
 
