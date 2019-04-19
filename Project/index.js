@@ -20,8 +20,8 @@ const app = express();
 // });
 
 var docker = new Docker(); 
-var acts_url = "http://localhost"
-// containers will contain obj in the format of {container,port}
+var acts_url = "http://3.209.208.104"
+// containers will contain obj in the format of {container,port,resolving}
 var containers = [];
 
 var ports = ['8001', '8002', '8003', '8004', '8005', '8006', '8007', '8008', '8009', '8010', '8011' ]
@@ -228,7 +228,7 @@ function scaling() {
 
 function restartInstance(cont) {
     cont.resolving = true;
-    
+
     cont.container.stop()
         .then(function (data) {
             containers.splice(containers.findIndex(function (i) {

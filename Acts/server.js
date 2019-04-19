@@ -473,7 +473,7 @@ app.post('/api/v1/acts', function (req, res) {
             // Use Users microservice
             // Ip addr for Users: 3.82.39.172
 
-            axios.get('http://localhost:8080/api/v1/users')
+            axios.get('http://3.82.39.172/api/v1/users')
             // axios.get('http://3.82.39.172:8080/api/v1/users')
                 .then(function (response) {
                     let users = response.data
