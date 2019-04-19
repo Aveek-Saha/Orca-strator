@@ -1,23 +1,23 @@
-// const express = require('express');
-// const bodyParser = require('body-parser');
+const express = require('express');
+const bodyParser = require('body-parser');
 const axios = require('axios');
 const Docker = require('dockerode');
 const httpProxy = require('http-proxy');
-const http = require('http');
+// const http = require('http');
 // const proxy = require('http-proxy-middleware');
-// const app = express();
+const app = express();
 
 
-// app.use(express.static(__dirname + '/public'));
-// app.use(bodyParser.urlencoded({ extended: 'true', limit: '5mb' }));
-// app.use(bodyParser.json({ limit: '5mb' }));
-// app.use(bodyParser.json({ type: 'application/vnd.api+json', limit: '5mb' }));
-// app.use(function (req, res, next) {
-//     res.header('Access-Control-Allow-Origin', '*');
-//     res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
-//     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-//     next();
-// });
+app.use(express.static(__dirname + '/public'));
+app.use(bodyParser.urlencoded({ extended: 'true', limit: '5mb' }));
+app.use(bodyParser.json({ limit: '5mb' }));
+app.use(bodyParser.json({ type: 'application/vnd.api+json', limit: '5mb' }));
+app.use(function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    next();
+});
 
 var docker = new Docker(); 
 var acts_url = "http://3.209.208.104"
@@ -71,6 +71,7 @@ function removeInstance(cont) {
             console.log("Number of running containers: " + containers.length);
 
             ports.push(cont.port);
+            // i = (i + 1) % containers.length;
         })
     
 }
@@ -165,7 +166,7 @@ function scaling() {
             }
         }
     }
-    else if (scale_count >= 140 && scale_count < 160) { 
+    else if (scale_count >= 120 && scale_count < 140) { 
         var num = 7;
         if (len == num) return;
         else if (len > num) {
@@ -179,7 +180,7 @@ function scaling() {
             }
         }
     }
-    else if (scale_count >= 160 && scale_count < 180) { 
+    else if (scale_count >= 140 && scale_count < 160) { 
         var num = 8;
         if (len == num) return;
         else if (len > num) {
@@ -193,7 +194,7 @@ function scaling() {
             }
         }
     }
-    else if (scale_count >= 180 && scale_count < 200) { 
+    else if (scale_count >= 160 && scale_count < 180) { 
         var num = 9;
         if (len == num) return;
         else if (len > num) {
@@ -207,7 +208,7 @@ function scaling() {
             }
         }
     }
-    else if (scale_count >= 200 && scale_count < 220) { 
+    else if (scale_count >= 180 && scale_count < 200) { 
         var num = 10;
         if (len == num) return;
         else if (len > num) {
@@ -265,7 +266,7 @@ function healthCheck() {
                 }
             })
             .catch(function (error) {
-                console.log("...");
+                console.log(error);
                 
             });
 
@@ -273,26 +274,45 @@ function healthCheck() {
 
 }
 
-setInterval(healthCheck, 1000);
+// setInterval(healthCheck, 1000);
 
 var proxy = httpProxy.createProxyServer({})
     .on('error', function (e) {
         console.log(JSON.stringify(e, null, ' '))
     });
 
-var server = http.createServer(function (req, res) {
+// var server = http.createServer(function (req, res) {
 
-    console.log(i)
-    proxy.web(req, res, { target: acts_url + ':' + containers[i]['port']});
+//     console.log(total_count)
+//     proxy.web(req, res, { target: acts_url + ':' + containers[i]['port']});
+
+//     total_count++;
+//     if (total_count == 1){
+//         setInterval(scaling, 2*60*1000);
+//     }
+
+//     i = (i + 1) % containers.length;
+//     scale_count++;
+// });
+
+app.get("/api/*", function (req, res) {
+
+    console.log("Request " + scale_count + " Num-containers: " + containers.length + "    i= " + scale_count % containers.length)
+    i = scale_count % containers.length;
+
+    console.log(" Sent to: " + containers[i]);
+    
+    proxy.web(req, res, { target: acts_url + ':' + containers[i]['port'] });
 
     total_count++;
-    if (total_count == 1){
-        setInterval(scaling, 2*60*1000);
+    if (total_count == 1) {
+        setInterval(scaling, 2 * 60 * 1000);
     }
 
-    i = (i + 1) % containers.length;
     scale_count++;
 });
 
-server.listen(8080);
+// server.listen(8080);
+app.listen(8080);
+
 console.log("Server started");
