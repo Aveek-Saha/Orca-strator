@@ -290,5 +290,5 @@ var server = http.createServer(function (req, res) {
     scale_count++;
 });
 
-server.listen(8000);
+server.listen(80);
 console.log("Server started");

@@ -173,7 +173,6 @@ app.post('/api/v1/categories', function (req, res) {
 });
 
 app.route('/api/v1/categories')
-    // .get((req, res) => { res.status(405).send() })
     .delete((req, res) => { res.status(405).send() })
 
 app.delete('/api/v1/categories/:categoryName', function (req, res) {
