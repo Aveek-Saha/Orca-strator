@@ -1,5 +1,5 @@
-const express = require('express');
-const bodyParser = require('body-parser');
+// const express = require('express');
+// const bodyParser = require('body-parser');
 const axios = require('axios');
 const Docker = require('dockerode');
 const httpProxy = require('http-proxy');
@@ -275,7 +275,10 @@ function healthCheck() {
 
 setInterval(healthCheck, 1000);
 
-var proxy = httpProxy.createProxyServer({});
+var proxy = httpProxy.createProxyServer({})
+    .on('error', function (e) {
+        console.log(JSON.stringify(e, null, ' '))
+    });
 
 var server = http.createServer(function (req, res) {
 
