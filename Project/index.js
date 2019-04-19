@@ -110,118 +110,118 @@ function scaling() {
             }
         }
     }
-    else if (scale_count >= 40 && scale_count < 60) { 
-        var num = 3;
-        if (len == num) return;
-        else if (len > num) {
-            for (let j = 0; j < len - num; j++) {
-                removeInstance(containers[j]);
-            }
-        }
-        else if (len < num) {
-            for (let j = 0; j < num - len; j++) {
-                addInstance();
-            }
-        }
-    }
-    else if (scale_count >= 60 && scale_count < 80) { 
-        var num = 4;
-        if (len == num) return;
-        else if (len > num) {
-            for (let j = 0; j < len - num; j++) {
-                removeInstance(containers[j]);
-            }
-        }
-        else if (len < num) {
-            for (let j = 0; j < num - len; j++) {
-                addInstance();
-            }
-        }
-    }
-    else if (scale_count >= 80 && scale_count < 100) { 
-        var num = 5;
-        if (len == num) return;
-        else if (len > num) {
-            for (let j = 0; j < len - num; j++) {
-                removeInstance(containers[j]);
-            }
-        }
-        else if (len < num) {
-            for (let j = 0; j < num - len; j++) {
-                addInstance();
-            }
-        }
-    }
-    else if (scale_count >= 100 && scale_count < 120) { 
-        var num = 6;
-        if (len == num) return;
-        else if (len > num) {
-            for (let j = 0; j < len - num; j++) {
-                removeInstance(containers[j]);
-            }
-        }
-        else if (len < num) {
-            for (let j = 0; j < num - len; j++) {
-                addInstance();
-            }
-        }
-    }
-    else if (scale_count >= 120 && scale_count < 140) { 
-        var num = 7;
-        if (len == num) return;
-        else if (len > num) {
-            for (let j = 0; j < len - num; j++) {
-                removeInstance(containers[j]);
-            }
-        }
-        else if (len < num) {
-            for (let j = 0; j < num - len; j++) {
-                addInstance();
-            }
-        }
-    }
-    else if (scale_count >= 140 && scale_count < 160) { 
-        var num = 8;
-        if (len == num) return;
-        else if (len > num) {
-            for (let j = 0; j < len - num; j++) {
-                removeInstance(containers[j]);
-            }
-        }
-        else if (len < num) {
-            for (let j = 0; j < num - len; j++) {
-                addInstance();
-            }
-        }
-    }
-    else if (scale_count >= 160 && scale_count < 180) { 
-        var num = 9;
-        if (len == num) return;
-        else if (len > num) {
-            for (let j = 0; j < len - num; j++) {
-                removeInstance(containers[j]);
-            }
-        }
-        else if (len < num) {
-            for (let j = 0; j < num - len; j++) {
-                addInstance();
-            }
-        }
-    }
-    else if (scale_count >= 180 && scale_count < 200) { 
-        var num = 10;
-        if (len == num) return;
-        else if (len > num) {
-            for (let j = 0; j < len - num; j++) {
-                removeInstance(containers[j]);
-            }
-        }
-        else if (len < num) {
-            for (let j = 0; j < num - len; j++) {
-                addInstance();
-            }
-        }
-    }
+    // else if (scale_count >= 40 && scale_count < 60) { 
+    //     var num = 3;
+    //     if (len == num) return;
+    //     else if (len > num) {
+    //         for (let j = 0; j < len - num; j++) {
+    //             removeInstance(containers[j]);
+    //         }
+    //     }
+    //     else if (len < num) {
+    //         for (let j = 0; j < num - len; j++) {
+    //             addInstance();
+    //         }
+    //     }
+    // }
+    // else if (scale_count >= 60 && scale_count < 80) { 
+    //     var num = 4;
+    //     if (len == num) return;
+    //     else if (len > num) {
+    //         for (let j = 0; j < len - num; j++) {
+    //             removeInstance(containers[j]);
+    //         }
+    //     }
+    //     else if (len < num) {
+    //         for (let j = 0; j < num - len; j++) {
+    //             addInstance();
+    //         }
+    //     }
+    // }
+    // else if (scale_count >= 80 && scale_count < 100) { 
+    //     var num = 5;
+    //     if (len == num) return;
+    //     else if (len > num) {
+    //         for (let j = 0; j < len - num; j++) {
+    //             removeInstance(containers[j]);
+    //         }
+    //     }
+    //     else if (len < num) {
+    //         for (let j = 0; j < num - len; j++) {
+    //             addInstance();
+    //         }
+    //     }
+    // }
+    // else if (scale_count >= 100 && scale_count < 120) { 
+    //     var num = 6;
+    //     if (len == num) return;
+    //     else if (len > num) {
+    //         for (let j = 0; j < len - num; j++) {
+    //             removeInstance(containers[j]);
+    //         }
+    //     }
+    //     else if (len < num) {
+    //         for (let j = 0; j < num - len; j++) {
+    //             addInstance();
+    //         }
+    //     }
+    // }
+    // else if (scale_count >= 120 && scale_count < 140) { 
+    //     var num = 7;
+    //     if (len == num) return;
+    //     else if (len > num) {
+    //         for (let j = 0; j < len - num; j++) {
+    //             removeInstance(containers[j]);
+    //         }
+    //     }
+    //     else if (len < num) {
+    //         for (let j = 0; j < num - len; j++) {
+    //             addInstance();
+    //         }
+    //     }
+    // }
+    // else if (scale_count >= 140 && scale_count < 160) { 
+    //     var num = 8;
+    //     if (len == num) return;
+    //     else if (len > num) {
+    //         for (let j = 0; j < len - num; j++) {
+    //             removeInstance(containers[j]);
+    //         }
+    //     }
+    //     else if (len < num) {
+    //         for (let j = 0; j < num - len; j++) {
+    //             addInstance();
+    //         }
+    //     }
+    // }
+    // else if (scale_count >= 160 && scale_count < 180) { 
+    //     var num = 9;
+    //     if (len == num) return;
+    //     else if (len > num) {
+    //         for (let j = 0; j < len - num; j++) {
+    //             removeInstance(containers[j]);
+    //         }
+    //     }
+    //     else if (len < num) {
+    //         for (let j = 0; j < num - len; j++) {
+    //             addInstance();
+    //         }
+    //     }
+    // }
+    // else if (scale_count >= 180 && scale_count < 200) { 
+    //     var num = 10;
+    //     if (len == num) return;
+    //     else if (len > num) {
+    //         for (let j = 0; j < len - num; j++) {
+    //             removeInstance(containers[j]);
+    //         }
+    //     }
+    //     else if (len < num) {
+    //         for (let j = 0; j < num - len; j++) {
+    //             addInstance();
+    //         }
+    //     }
+    // }
     
     scale_count = 0;
     
@@ -274,7 +274,6 @@ function healthCheck() {
 
 }
 
-setInterval(healthCheck, 1000);
 
 var proxy = httpProxy.createProxyServer({})
     .on('error', function (e) {
@@ -306,7 +305,8 @@ app.get("/api/*", function (req, res) {
 
     total_count++;
     if (total_count == 1) {
-        // setInterval(scaling, 2 * 60 * 1000);
+        setInterval(healthCheck, 10 * 1000);
+        setInterval(scaling, 2 * 60 * 1000);
     }
 
     scale_count++;
