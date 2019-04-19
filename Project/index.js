@@ -266,7 +266,7 @@ function healthCheck() {
                 }
             })
             .catch(function (error) {
-                console.log(error);
+                // console.log(error);
                 
             });
 
@@ -274,7 +274,7 @@ function healthCheck() {
 
 }
 
-setInterval(healthCheck, 1000);
+// setInterval(healthCheck, 1000);
 
 var proxy = httpProxy.createProxyServer({})
     .on('error', function (e) {
@@ -306,7 +306,7 @@ app.get("/api/*", function (req, res) {
 
     total_count++;
     if (total_count == 1) {
-        setInterval(scaling, 2 * 60 * 1000);
+        // setInterval(scaling, 2 * 60 * 1000);
     }
 
     scale_count++;
