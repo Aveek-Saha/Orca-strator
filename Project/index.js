@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const axios = require('axios');
 const Docker = require('dockerode');
 const httpProxy = require('http-proxy');
+const http = require('http');
 // const proxy = require('http-proxy-middleware');
 const app = express();
 
@@ -47,9 +48,11 @@ function addInstance() {
     }).then(function (container) {
         return container.start();
     }).then(function (container) {
-        console.log(container);
+        console.log("Container Started on port: " + free_port);
 
-        containers.push({"container": container, "port": free_port})
+        containers.push({"container": container, "port": free_port, "resolving": false});
+
+        console.log("Number of running containers: " + containers.length);
 
         return container;
     }).catch(function (err) {
@@ -58,21 +61,29 @@ function addInstance() {
 }
 
 function removeInstance(cont) {
-    cont.container.stop();
+    cont.container.stop()
+        .then(function (data) {
+            containers.splice(containers.findIndex(function (i) {
+                return i.port == cont.port;
+            }), 1);
 
-    containers.splice(containers.findIndex(function (i) {
-        return i.port == cont.port;
-    }), 1);
+            console.log("Container stopped on port: " + cont.port);
+            console.log("Number of running containers: " + containers.length);
 
-    ports.push(cont.port);
+            ports.push(cont.port);
+        })
+    
 }
 
-// There should be 1 instance running
-// addInstance();
 
-function scaling(params) {
+
+// There should be 1 instance running
+addInstance();
+
+function scaling() {
 
     var len = containers.length;
+
     if (scale_count < 20) { 
         if (len == 1) return;
         else if (len > 1) {
@@ -212,6 +223,26 @@ function scaling(params) {
     }
     
     scale_count = 0;
+    
+}
+
+function restartInstance(cont) {
+    cont.resolving = true;
+    
+    cont.container.stop()
+        .then(function (data) {
+            containers.splice(containers.findIndex(function (i) {
+                return i.port == cont.port;
+            }), 1);
+
+            console.log("Container stopped on port: " + cont.port);
+            console.log("Number of running containers: " + containers.length);
+
+            ports.push(cont.port);
+
+            addInstance();
+
+        })
 }
 
 // Function to check health
@@ -219,43 +250,45 @@ function healthCheck() {
     
 
     containers.forEach(cont => {
-        axios.get(acts_url + '/api/v1/_health:' + cont.port)
+        axios.get(acts_url + ":" + cont.port + '/api/v1/_health' )
             .then(function (response) {
-                console.log(response);
+                // console.log(cont.port + ": OK");
 
             })
             .catch(function (error) {
-                console.log(error);
+                // error.code == "ECONNRESET" 
+                if (cont.resolving == false && error.response.status >= 500) {
+                    console.log(error.response.status);
 
-                removeInstance(cont)
+                    restartInstance(cont)
 
-                addInstance();
+                }
+
+                // removeInstance(cont)
+
+                // addInstance();
             });
 
     })
 
 }
 
-// setInterval(healthCheck, 1000);
+setInterval(healthCheck, 1000);
 
+var proxy = httpProxy.createProxyServer({});
 
+var server = http.createServer(function (req, res) {
 
-
-httpProxy.createServer(function (req, res, proxy) {
-    proxy.proxyRequest(req, res, acts_url + ':' + containers[i].port);
+    proxy.web(req, res, { target: acts_url + ':' + containers[i]['port']});
 
     total_count++;
     if (total_count == 1){
-        // setInterval(scaling, 2*60*1000);
+        setInterval(scaling, 2*60*1000);
     }
 
     i = (i + 1) % containers.length;
     scale_count++;
-}).listen(8000);
+});
 
-// app.use(
-//   '/',
-//   proxy({ target: addresses[i].host + ':' + toString(addresses[i].port) })
-// );
-// app.listen(3000);
+server.listen(8000);
 console.log("Server started");
