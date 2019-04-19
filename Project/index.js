@@ -24,7 +24,7 @@ var acts_url = "http://3.209.208.104"
 // containers will contain obj in the format of {container,port,resolving}
 var containers = [];
 
-var ports = ['8001', '8002', '8003', '8004', '8005', '8006', '8007', '8008', '8009', '8010', '8011' ]
+var ports = ['8010', '8009', '8008', '8007', '8006', '8005', '8004', '8003', '8002', '8001', '8000' ]
 
 var i = 0;
 var scale_count = 0;
