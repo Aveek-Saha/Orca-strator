@@ -263,10 +263,10 @@ function healthCheck() {
                     restartInstance(cont)
 
                 }
-
-                // removeInstance(cont)
-
-                // addInstance();
+            })
+            .catch(function (error) {
+                console.log("...");
+                
             });
 
     })
@@ -281,7 +281,7 @@ var proxy = httpProxy.createProxyServer({})
     });
 
 var server = http.createServer(function (req, res) {
-
+    console.log("No. of Cont " + containers.length)
     proxy.web(req, res, { target: acts_url + ':' + containers[i]['port']});
 
     total_count++;
