@@ -274,7 +274,7 @@ function healthCheck() {
 
 }
 
-// setInterval(healthCheck, 1000);
+setInterval(healthCheck, 1000);
 
 var proxy = httpProxy.createProxyServer({})
     .on('error', function (e) {
