@@ -313,6 +313,6 @@ app.get("/api/*", function (req, res) {
 });
 
 // server.listen(8080);
-app.listen(8080);
+app.listen(80);
 
 console.log("Server started");
