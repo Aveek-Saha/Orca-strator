@@ -276,26 +276,23 @@ function healthCheck() {
 setInterval(healthCheck, 1000);
 
 var proxy = httpProxy.createProxyServer({})
-    .on('proxyRes', function (proxyRes, req, res) {
-        console.log(i)
-
-        total_count++;
-        if (total_count == 1) {
-            setInterval(scaling, 2 * 60 * 1000);
-        }
-
-        i = (i + 1) % containers.length;
-        scale_count++;
-    })
     .on('error', function (e) {
         console.log(JSON.stringify(e, null, ' '))
     });
 
 var server = http.createServer(function (req, res) {
 
+    console.log(i)
     proxy.web(req, res, { target: acts_url + ':' + containers[i]['port']});
 
+    total_count++;
+    if (total_count == 1){
+        setInterval(scaling, 2*60*1000);
+    }
+
+    i = (i + 1) % containers.length;
+    scale_count++;
 });
 
-server.listen(80);
+server.listen(8080);
 console.log("Server started");
