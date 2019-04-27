@@ -479,16 +479,19 @@ app.post('/api/v1/acts', function (req, res) {
                     console.log(users.indexOf(req.body.username));
                     
                     if (users.length == 0) {
+			console.log("Length users 0");
                         res.status(400);
                         res.send();
                     }
                     else if (users.indexOf(req.body.username) == -1){
+			console.log("User Not found");
                         res.status(400);
                         res.send();
                     }
                     else {
                         Category.find({ name: req.body.categoryName }, (err, cats) => {
                             if (cats.length == 0) {
+				console.log("Category Not found");
                                 res.status(400);
                                 res.send();
                             }
@@ -506,12 +509,14 @@ app.post('/api/v1/acts', function (req, res) {
                                         upvotes: 0
                                     }, (err, c) => {
                                         if (err) {
+					console.log("Database error");
                                             res.status(400);
                                             res.send();
                                         }
                                         else {
                                             Category.findOneAndUpdate({ name: req.body.categoryName }, { $set: { count: cats[0].count + 1 } }, (err, doc, ca) => {
                                                 if (err) {
+						console.log("Search error");
                                                     res.status(400);
                                                     res.send();
                                                 }
@@ -524,6 +529,7 @@ app.post('/api/v1/acts', function (req, res) {
                                     });
                                 }
                                 else {
+				console.log("Error 2");
                                     res.status(400);
                                     res.send();
                                 }
@@ -539,6 +545,7 @@ app.post('/api/v1/acts', function (req, res) {
                 });
         }
         else{
+console.log(" error1");
             res.status(400);
             res.send();          
         }
