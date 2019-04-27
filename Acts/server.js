@@ -494,7 +494,7 @@ app.post('/api/v1/acts', function (req, res) {
                             }
                             else {
 // if (/^([0-9]{2}-[0-9]{2}-[0-9]{4}:[0-9]{2}-[0-9]{2}-[0-9]{2}$)/.test(req.body.timestamp) && req.body.upvotes == null && /^[a-zA-Z0-9]*==$/.test(req.body.imgB64))
-                                if (/^([0-9]{2}-[0-9]{2}-[0-9]{4}:[0-9]{2}-[0-9]{2}-[0-9]{2}$)/.test(req.body.timestamp) && req.body.upvotes == null) {
+                                if (true) {
 
                                     Act.create({
                                         username: req.body.username,
