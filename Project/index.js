@@ -101,7 +101,7 @@ function scaling() {
     if (scale_count < scale_req) {
         if (len == 1) return;
         else if (len > 1) {
-            for (let j = 1; j < len; j++) {
+            for (let j = len - 1; j > 0; j--) {
                 removeInstance(containers[j]);
             }
         }
@@ -202,7 +202,7 @@ app.get("/api/*", function (req, res) {
 
     total_count++;
     if (total_count == 1) {
-        // setInterval(healthCheck, health_interval);
+        setInterval(healthCheck, health_interval);
         setInterval(scaling, scale_interval);
     }
 
