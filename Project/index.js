@@ -167,6 +167,7 @@ function healthCheck() {
             })
             .catch(function (error) {
                 // error.code == "ECONNRESET" 
+		console.log(error);
                 if (cont.resolving == false && error.response.status >= 500) {
                     console.log(error.response.status);
 
@@ -175,7 +176,7 @@ function healthCheck() {
                 }
             })
             .catch(function (error) {
-                console.log(error);
+                // console.log(error);
 
             });
 
