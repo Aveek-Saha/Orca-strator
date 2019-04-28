@@ -175,7 +175,7 @@ function healthCheck() {
                 }
             })
             .catch(function (error) {
-                // console.log(error);
+                console.log(error);
 
             });
 
@@ -194,7 +194,7 @@ app.get("/api/*", function (req, res) {
     console.log("Request " + scale_count + " Num-containers: " + containers.length + "    i= " + scale_count % containers.length)
     i = scale_count % containers.length;
 
-    console.log(" Sent to: " + containers[i].port);
+    console.log(req +" Sent to: " + containers[i].port);
 
     proxy.web(req, res, { target: acts_url + ':' + containers[i]['port'] });
 
