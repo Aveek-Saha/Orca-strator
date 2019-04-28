@@ -65,6 +65,7 @@ function addInstance() {
 
         console.log("Container Started on port: " + free_port);
         console.log("Number of running containers: " + containers.length);
+        containers.sort((a, b) => (parseInt(a.port) > parseInt(b.port)) ? 1 : -1);
 
         return container;
     }).catch(function (err) {
@@ -138,18 +139,17 @@ function scaling() {
 function restartInstance(cont) {
     cont.resolving = true;
 
+    containers.splice(containers.findIndex(function (i) {
+        return i.port == cont.port;
+    }), 1);
+
     cont.container.stop()
         .then(function (data) {
-            containers.splice(containers.findIndex(function (i) {
-                return i.port == cont.port;
-            }), 1);
 
             console.log("Container stopped on port: " + cont.port);
             console.log("Number of running containers: " + containers.length);
 
             ports.push(cont.port);
-            ports.sort((a, b) => (parseInt(a.port) > parseInt(b.port)) ? 1 : -1)
-            console.log(ports);
             
             addInstance();
 
