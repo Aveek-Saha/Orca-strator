@@ -3,8 +3,8 @@ const bodyParser = require('body-parser');
 const axios = require('axios');
 const Docker = require('dockerode');
 const httpProxy = require('http-proxy');
-// const http = require('http');
-// const proxy = require('http-proxy-middleware');
+const fs = require('fs')
+
 const app = express();
 
 
@@ -19,12 +19,25 @@ app.use(function (req, res, next) {
     next();
 });
 
+let config = JSON.parse(fs.readFileSync('config.json', 'utf-8'))
+var acts_url = config.url;
+var scale_req = config.scale_req;
+var max_scale = config.max_scale;
+var scale_interval = config.scale_interval;
+var health_interval = config.health_interval;
+var image_name = config.image_name;
+
 var docker = new Docker(); 
-var acts_url = "http://3.209.208.104"
+// var acts_url = "http://3.209.208.104"
+
 // containers will contain obj in the format of {container,port,resolving}
 var containers = [];
 
-var ports = ['8010', '8009', '8008', '8007', '8006', '8005', '8004', '8003', '8002', '8001', '8000' ]
+var ports = [];
+for (let i = 0; i < max_scale; i++)
+    ports.unshift((8000 + i).toString())
+console.log(ports);
+    
 
 var i = 0;
 var scale_count = 0;
@@ -32,10 +45,10 @@ var total_count = 0
 
 
 function addInstance() {
-    free_port = ports.pop()
+    let free_port = ports.pop()
 
     docker.createContainer({
-        Image: 'acts',
+        Image: image_name,
         "HostConfig": {
             "PortBindings": {
                 "8000/tcp": [
@@ -48,10 +61,9 @@ function addInstance() {
     }).then(function (container) {
         return container.start();
     }).then(function (container) {
+        containers.push({ "container": container, "port": free_port, "resolving": false });
+
         console.log("Container Started on port: " + free_port);
-
-        containers.push({"container": container, "port": free_port, "resolving": false});
-
         console.log("Number of running containers: " + containers.length);
 
         return container;
@@ -84,8 +96,9 @@ addInstance();
 function scaling() {
 
     var len = containers.length;
+    var num = Math.floor(scale_count / scale_req) + 1;
 
-    if (scale_count < 20) { 
+    if (scale_count < scale_req) { 
         if (len == 1) return;
         else if (len > 1) {
             for (let j = 1; j < len; j++) {
@@ -96,11 +109,18 @@ function scaling() {
             addInstance();
         }
     }
-    else if (scale_count >= 20 && scale_count < 40) {
-        var num = 2;
+    else if(num > max_scale){
+        if (len == max_scale) return;
+        else if (len < max_scale) {
+            for (let j = 0; j < max_scale; j++) {
+                addInstance();
+            }
+        }
+    }
+    else{
         if (len == num) return;
         else if (len > num) {
-            for (let j = 0; j < len - num; j++) {
+            for (let j = len - 1; j > num - 1; j--) {
                 removeInstance(containers[j]);
             }
         }
@@ -110,118 +130,6 @@ function scaling() {
             }
         }
     }
-    // else if (scale_count >= 40 && scale_count < 60) { 
-    //     var num = 3;
-    //     if (len == num) return;
-    //     else if (len > num) {
-    //         for (let j = 0; j < len - num; j++) {
-    //             removeInstance(containers[j]);
-    //         }
-    //     }
-    //     else if (len < num) {
-    //         for (let j = 0; j < num - len; j++) {
-    //             addInstance();
-    //         }
-    //     }
-    // }
-    // else if (scale_count >= 60 && scale_count < 80) { 
-    //     var num = 4;
-    //     if (len == num) return;
-    //     else if (len > num) {
-    //         for (let j = 0; j < len - num; j++) {
-    //             removeInstance(containers[j]);
-    //         }
-    //     }
-    //     else if (len < num) {
-    //         for (let j = 0; j < num - len; j++) {
-    //             addInstance();
-    //         }
-    //     }
-    // }
-    // else if (scale_count >= 80 && scale_count < 100) { 
-    //     var num = 5;
-    //     if (len == num) return;
-    //     else if (len > num) {
-    //         for (let j = 0; j < len - num; j++) {
-    //             removeInstance(containers[j]);
-    //         }
-    //     }
-    //     else if (len < num) {
-    //         for (let j = 0; j < num - len; j++) {
-    //             addInstance();
-    //         }
-    //     }
-    // }
-    // else if (scale_count >= 100 && scale_count < 120) { 
-    //     var num = 6;
-    //     if (len == num) return;
-    //     else if (len > num) {
-    //         for (let j = 0; j < len - num; j++) {
-    //             removeInstance(containers[j]);
-    //         }
-    //     }
-    //     else if (len < num) {
-    //         for (let j = 0; j < num - len; j++) {
-    //             addInstance();
-    //         }
-    //     }
-    // }
-    // else if (scale_count >= 120 && scale_count < 140) { 
-    //     var num = 7;
-    //     if (len == num) return;
-    //     else if (len > num) {
-    //         for (let j = 0; j < len - num; j++) {
-    //             removeInstance(containers[j]);
-    //         }
-    //     }
-    //     else if (len < num) {
-    //         for (let j = 0; j < num - len; j++) {
-    //             addInstance();
-    //         }
-    //     }
-    // }
-    // else if (scale_count >= 140 && scale_count < 160) { 
-    //     var num = 8;
-    //     if (len == num) return;
-    //     else if (len > num) {
-    //         for (let j = 0; j < len - num; j++) {
-    //             removeInstance(containers[j]);
-    //         }
-    //     }
-    //     else if (len < num) {
-    //         for (let j = 0; j < num - len; j++) {
-    //             addInstance();
-    //         }
-    //     }
-    // }
-    // else if (scale_count >= 160 && scale_count < 180) { 
-    //     var num = 9;
-    //     if (len == num) return;
-    //     else if (len > num) {
-    //         for (let j = 0; j < len - num; j++) {
-    //             removeInstance(containers[j]);
-    //         }
-    //     }
-    //     else if (len < num) {
-    //         for (let j = 0; j < num - len; j++) {
-    //             addInstance();
-    //         }
-    //     }
-    // }
-    // else if (scale_count >= 180 && scale_count < 200) { 
-    //     var num = 10;
-    //     if (len == num) return;
-    //     else if (len > num) {
-    //         for (let j = 0; j < len - num; j++) {
-    //             removeInstance(containers[j]);
-    //         }
-    //     }
-    //     else if (len < num) {
-    //         for (let j = 0; j < num - len; j++) {
-    //             addInstance();
-    //         }
-    //     }
-    // }
     
     scale_count = 0;
     
@@ -240,7 +148,9 @@ function restartInstance(cont) {
             console.log("Number of running containers: " + containers.length);
 
             ports.push(cont.port);
-
+            ports.sort((a, b) => (parseInt(a.port) > parseInt(b.port)) ? 1 : -1)
+            console.log(ports);
+            
             addInstance();
 
         })
@@ -280,33 +190,19 @@ var proxy = httpProxy.createProxyServer({})
         console.log(JSON.stringify(e, null, ' '))
     });
 
-// var server = http.createServer(function (req, res) {
-
-//     console.log(total_count)
-//     proxy.web(req, res, { target: acts_url + ':' + containers[i]['port']});
-
-//     total_count++;
-//     if (total_count == 1){
-//         setInterval(scaling, 2*60*1000);
-//     }
-
-//     i = (i + 1) % containers.length;
-//     scale_count++;
-// });
-
 app.get("/api/*", function (req, res) {
 
     console.log("Request " + scale_count + " Num-containers: " + containers.length + "    i= " + scale_count % containers.length)
     i = scale_count % containers.length;
 
-    console.log(" Sent to: " + containers[i]);
+    console.log(" Sent to: " + containers[i].port);
     
     proxy.web(req, res, { target: acts_url + ':' + containers[i]['port'] });
 
     total_count++;
     if (total_count == 1) {
-        setInterval(healthCheck, 10 * 1000);
-        setInterval(scaling, 2 * 60 * 1000);
+        setInterval(healthCheck,health_interval);
+        setInterval(scaling, scale_interval);
     }
 
     scale_count++;

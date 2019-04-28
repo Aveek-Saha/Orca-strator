@@ -1,0 +1,8 @@
+{
+    "url" : "http://localhost",
+    "scale_req" : 20,
+    "max_scale" : 10,
+    "scale_interval" : 120000,
+    "health_interval" : 10000,
+    "image_name" : "acts"
+}
