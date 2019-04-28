@@ -167,7 +167,8 @@ function healthCheck() {
             })
             .catch(function (error) {
                 // error.code == "ECONNRESET" 
-		console.log(error);
+		console.log(error.code);
+		console.log(error.config.url);
                 if (cont.resolving == false && error.response.status >= 500) {
                     console.log(error.response.status);
 
@@ -201,7 +202,7 @@ app.get("/api/*", function (req, res) {
 
     total_count++;
     if (total_count == 1) {
-        setInterval(healthCheck, health_interval);
+        // setInterval(healthCheck, health_interval);
         setInterval(scaling, scale_interval);
     }
 
