@@ -170,7 +170,8 @@ function healthCheck() {
                 // error.code == "ECONNRESET" 
 		console.log(error.code);
 		console.log(error.config.url);
-                if (cont.resolving == false && error.response.status >= 500) {
+		// && error.response.status >= 500
+                if (cont.resolving == false ) {
                     console.log(error.response.status);
 
                     restartInstance(cont)
