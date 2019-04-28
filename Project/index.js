@@ -73,11 +73,12 @@ function addInstance() {
 }
 
 function removeInstance(cont) {
-    cont.container.stop()
-        .then(function (data) {
-            containers.splice(containers.findIndex(function (i) {
+	containers.splice(containers.findIndex(function (i) {
                 return i.port == cont.port;
             }), 1);
+    cont.container.stop()
+        .then(function (data) {
+            
 
             console.log("Container stopped on port: " + cont.port);
             console.log("Number of running containers: " + containers.length);
