@@ -103,7 +103,7 @@ function scaling() {
         if (len == 1) return;
         else if (len > 1) {
             for (let j = len - 1; j > 0; j--) {
-                removeInstance(containers[j]);
+                // removeInstance(containers[j]);
             }
         }
         else if (len < 1) {
