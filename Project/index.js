@@ -27,7 +27,7 @@ var scale_interval = config.scale_interval;
 var health_interval = config.health_interval;
 var image_name = config.image_name;
 
-var docker = new Docker(); 
+var docker = new Docker();
 // var acts_url = "http://3.209.208.104"
 
 // containers will contain obj in the format of {container,port,resolving}
@@ -37,7 +37,6 @@ var ports = [];
 for (let i = 0; i < max_scale; i++)
     ports.unshift((8000 + i).toString())
 console.log(ports);
-    
 
 var i = 0;
 var scale_count = 0;
@@ -86,7 +85,7 @@ function removeInstance(cont) {
             ports.push(cont.port);
             // i = (i + 1) % containers.length;
         })
-    
+
 }
 
 
@@ -99,7 +98,7 @@ function scaling() {
     var len = containers.length;
     var num = Math.floor(scale_count / scale_req) + 1;
 
-    if (scale_count < scale_req) { 
+    if (scale_count < scale_req) {
         if (len == 1) return;
         else if (len > 1) {
             for (let j = 1; j < len; j++) {
@@ -110,7 +109,7 @@ function scaling() {
             addInstance();
         }
     }
-    else if(num > max_scale){
+    else if (num > max_scale) {
         if (len == max_scale) return;
         else if (len < max_scale) {
             for (let j = 0; j < max_scale; j++) {
@@ -118,7 +117,7 @@ function scaling() {
             }
         }
     }
-    else{
+    else {
         if (len == num) return;
         else if (len > num) {
             for (let j = len - 1; j > num - 1; j--) {
@@ -131,9 +130,9 @@ function scaling() {
             }
         }
     }
-    
+
     scale_count = 0;
-    
+
 }
 
 function restartInstance(cont) {
@@ -150,7 +149,7 @@ function restartInstance(cont) {
             console.log("Number of running containers: " + containers.length);
 
             ports.push(cont.port);
-            
+
             addInstance();
 
         })
@@ -158,10 +157,10 @@ function restartInstance(cont) {
 
 // Function to check health
 function healthCheck() {
-    
+
 
     containers.forEach(cont => {
-        axios.get(acts_url + ":" + cont.port + '/api/v1/_health' )
+        axios.get(acts_url + ":" + cont.port + '/api/v1/_health')
             .then(function (response) {
                 // console.log(cont.port + ": OK");
 
@@ -177,7 +176,7 @@ function healthCheck() {
             })
             .catch(function (error) {
                 // console.log(error);
-                
+
             });
 
     })
@@ -196,12 +195,12 @@ app.get("/api/*", function (req, res) {
     i = scale_count % containers.length;
 
     console.log(" Sent to: " + containers[i].port);
-    
+
     proxy.web(req, res, { target: acts_url + ':' + containers[i]['port'] });
 
     total_count++;
     if (total_count == 1) {
-        setInterval(healthCheck,health_interval);
+        setInterval(healthCheck, health_interval);
         setInterval(scaling, scale_interval);
     }
 
