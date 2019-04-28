@@ -73,12 +73,12 @@ function addInstance() {
 }
 
 function removeInstance(cont) {
-	containers.splice(containers.findIndex(function (i) {
-                return i.port == cont.port;
-            }), 1);
+    containers.splice(containers.findIndex(function (i) {
+        return i.port == cont.port;
+    }), 1);
     cont.container.stop()
         .then(function (data) {
-            
+
 
             console.log("Container stopped on port: " + cont.port);
             console.log("Number of running containers: " + containers.length);
@@ -103,7 +103,7 @@ function scaling() {
         if (len == 1) return;
         else if (len > 1) {
             for (let j = len - 1; j > 0; j--) {
-                // removeInstance(containers[j]);
+                removeInstance(containers[j]);
             }
         }
         else if (len < 1) {
@@ -168,10 +168,10 @@ function healthCheck() {
             })
             .catch(function (error) {
                 // error.code == "ECONNRESET" 
-		console.log(error.code);
-		console.log(error.config.url);
-		// && error.response.status >= 500
-                if (cont.resolving == false ) {
+                console.log(error.code);
+                console.log(error.config.url);
+                // && error.response.status >= 500
+                if (cont.resolving == false) {
                     console.log(error.response.status);
 
                     restartInstance(cont)
@@ -198,7 +198,7 @@ app.get("/api/*", function (req, res) {
     console.log("Request " + scale_count + " Num-containers: " + containers.length + "    i= " + scale_count % containers.length)
     i = scale_count % containers.length;
 
-    console.log(req.url +" Sent to: " + containers[i].port);
+    console.log(req.url + " Sent to: " + containers[i].port);
 
     proxy.web(req, res, { target: acts_url + ':' + containers[i]['port'] });
 
