@@ -20,7 +20,7 @@ app.use(function (req, res, next) {
 });
 
 let config = JSON.parse(fs.readFileSync('config.json', 'utf-8'))
-// var acts_url = config.url;
+var acts_url = config.url;
 var scale_req = config.scale_req;
 var max_scale = config.max_scale;
 var scale_interval = config.scale_interval;
@@ -28,7 +28,7 @@ var health_interval = config.health_interval;
 var image_name = config.image_name;
 
 var docker = new Docker();
-var acts_url = "http://3.209.208.104"
+// var acts_url = "http://3.209.208.104"
 
 // containers will contain obj in the format of {container,port,resolving}
 var containers = [];
