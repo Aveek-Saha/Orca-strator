@@ -62,9 +62,9 @@ function addInstance() {
     }).then(function (container) {
         containers.push({ "container": container, "port": free_port, "resolving": false });
 
-        console.log("Container Started on port: " + free_port);
+        console.log("\nContainer Started on port: " + free_port);
         console.log("Number of running containers: " + containers.length);
-        containers.sort((a, b) => (parseInt(a.port) > parseInt(b.port)) ? 1 : -1);
+        // containers.sort((a, b) => (parseInt(a.port) > parseInt(b.port)) ? 1 : -1);
 
         return container;
     }).catch(function (err) {
@@ -80,7 +80,7 @@ function removeInstance(cont) {
         .then(function (data) {
 
 
-            console.log("Container stopped on port: " + cont.port);
+            console.log("\nContainer stopped on port: " + cont.port);
             console.log("Number of running containers: " + containers.length);
 
             ports.push(cont.port);
@@ -146,7 +146,7 @@ function restartInstance(cont) {
     cont.container.stop()
         .then(function (data) {
 
-            console.log("Container stopped on port: " + cont.port);
+            console.log("\nContainer stopped on port: " + cont.port);
             console.log("Number of running containers: " + containers.length);
 
             ports.push(cont.port);
