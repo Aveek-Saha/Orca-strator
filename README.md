@@ -1,5 +1,5 @@
-# Container Orchestrator for a Scalable API
-An orchestrator for a containerised API broken into microservices.
+# Container Orchestration System for a Scalable API
+An Orchestration System for a containerised API broken into microservices.
 
 Features a generic orchestrator that can be used with any application based on custom scaling and health checking rules.
 
