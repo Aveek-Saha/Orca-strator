@@ -5,7 +5,7 @@ const app = express();
 const mongoose = require('mongoose');
 var ObjectId = require('mongodb').ObjectID;
 
-mongoose.connect('mongodb://aveek:aveek123@ds147946.mlab.com:47946/selfieless2');
+mongoose.connect('mongodb://aveek:aveek123@ds221645.mlab.com:21645/selfieless');
 var Schema = mongoose.Schema;
 
 app.use(express.static(__dirname + '/public'));
