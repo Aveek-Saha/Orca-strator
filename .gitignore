@@ -33,17 +33,17 @@ bower_components
 build/Release
 Client/dist/
 
-# Remove server and Client
-Client/
-Server/
-
 # Dependency directories
-Server/node_modules/
-Client/node_modules/
+# Server/node_modules/
+# Client/node_modules/
 Acts/node_modules/
 Users/node_modules/
 Project/node_modules/
 jspm_packages/
+
+# Remove server and Client
+Client/
+Server/
 
 # TypeScript v1 declaration files
 typings/
