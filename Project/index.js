@@ -40,7 +40,7 @@ console.log(ports);
 
 var i = 0;
 var scale_count = 0;
-var total_count = 0
+var total_count = 0;
 
 
 function addInstance() {
