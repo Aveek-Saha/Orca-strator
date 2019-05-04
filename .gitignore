@@ -38,7 +38,7 @@ Client/dist/
 # Client/node_modules/
 Acts/node_modules/
 Users/node_modules/
-Project/node_modules/
+Orchestrator/node_modules/
 jspm_packages/
 
 # Remove server and Client
