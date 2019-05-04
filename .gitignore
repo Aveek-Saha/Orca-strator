@@ -33,6 +33,10 @@ bower_components
 build/Release
 Client/dist/
 
+# Remove server and Client
+Client
+Server
+
 # Dependency directories
 Server/node_modules/
 Client/node_modules/
