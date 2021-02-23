@@ -18,3 +18,11 @@ orchestrator increases or decreases the number of containers.
 ## Load Balancing:
 The round robin scheduling algorithm, that we have used to distribute requests, is a
 scheduling algorithm where each process is assigned a fixed time slot in a cyclic way.
+
+# Team
+This project was a team effort by
+
+| Name | GitHub Profile |
+|:---:|:---:|
+|  Aveek Saha | [aveek-saha](https://github.com/aveek-saha) |
+|  Arvind Srinivasan | [arvindsrinivasan](https://github.com/arvindsrinivasan) |
